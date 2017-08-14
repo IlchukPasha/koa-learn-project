@@ -1,0 +1,22 @@
+{
+  "name": "koa_learn_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "koa": "^2.3.0",
+    "koa-body": "^2.3.0",
+    "koa-compose": "^4.0.0",
+    "koa-router": "^7.2.1",
+    "path": "^0.12.7",
+    "pg": "^7.1.2",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.4.9"
+  }
+}
