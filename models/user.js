@@ -4,36 +4,45 @@ module.exports = function(sequelize, DataTypes) {
     email: {
       type: DataTypes.STRING,
       validate: {
-        isEmail: true,
-        notEmpty: true,
-        len: [4,30]
+        isEmail: { msg: 'not correct email format' },
+        notEmpty: { msg: 'email can`t be empty' },
+        len: { args: [4,30], msg: 'length must be in 4-30 symbols'},
+        isUnique: async value => {
+          let c = await User.count({
+            where: {
+              email: value
+            },
+          });
+          if(c > 0){
+            throw new Error('Email already exist');
+          }
+        }
       }
     },
     password: {
       type: DataTypes.STRING,
       validate: {
-        notEmpty: true,
-        len: [4,15]
+        notEmpty: { msg: 'password can`t be empty' },
+        len: { args: [4,30], msg: 'length must be in 4-15 symbols'}
       }
     },
     first_name: {
       type: DataTypes.STRING,
       validate: {
-        notEmpty: true,
-        len: [4,30]
+        notEmpty: { msg: 'first_name can`t be empty' },
+        len: { args: [4,30], msg: 'length must be in 4-30 symbols'}
       }
     },
     last_name: {
       type: DataTypes.STRING,
       validate: {
-        notEmpty: true,
-        len: [4,30]
+        notEmpty: { msg: 'last_name can`t be empty' },
+        len: { args: [4,30], msg: 'length must be in 4-30 symbols'}
       }
     }
   }, {
     classMethods: {
       associate: function(models) {
-        // associations can be defined here
       }
     }
   });
