@@ -1,5 +1,5 @@
-let models = require('../../models');
-const { each } = require('lodash');
+let models = require('../../../models/index');
+const { validate_errors } = require('./../../helpers');
 
 module.exports = async (ctx, next) => {
   let { email, password, first_name, last_name } = ctx.request.body;
@@ -12,13 +12,9 @@ module.exports = async (ctx, next) => {
 
   try {
     await user.validate();
+    await next();
   } catch (e) {
-    ctx.status = 400;
-    let validate_errors = [];
-    each(e.errors, error => {
-      validate_errors.push(error.message);
-    });
-    return (ctx.body = validate_errors);
+    e.obj = validate_errors(e);
+    ctx.app.emit('error', e, ctx);
   }
-  await next();
 };

@@ -1,4 +1,5 @@
 'use strict';
 module.exports = {
-  users: require('./users')
+  users: require('./users'),
+  auth: require('./auth')
 };

@@ -1,3 +1,7 @@
 module.exports = {
-  user_validate: require('./user_validate')
+  validators: {
+    user_create: require('./validators/user_create'),
+    auth: require('./validators/auth')
+  },
+  auth: require('./auth')
 };
