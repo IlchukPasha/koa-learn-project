@@ -10,7 +10,7 @@ const { validators: { user_create: user_create_validate_mw, auth: auth_validate_
 router.post('/signin', auth_validate_mw, async (ctx, next) => {
   let { email, password } = ctx.request.body;
   try {
-    let user = await models.User.find({ where: { email: email } });
+    let user = await models.User.find2({ where: { email: email } });
     if (user) {
       if (bcrypt.compareSync(password, user.password)) {
         let token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '120d' });
@@ -22,9 +22,9 @@ router.post('/signin', auth_validate_mw, async (ctx, next) => {
     } else {
       ctx.status = 401;
     }
-  } catch (err) {
+  } catch (e) {
     ctx.status = 500;
-    return (ctx.body = err);
+    ctx.app.emit('error', e, ctx);
   }
 });
 
@@ -42,7 +42,7 @@ router.post('/signup', user_create_validate_mw, async (ctx, next) => {
     ctx.body = { token: token };
   } catch (e) {
     ctx.status = 500;
-    return (ctx.body = e);
+    ctx.app.emit('error', e, ctx);
   }
 });
 

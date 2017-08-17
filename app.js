@@ -13,9 +13,13 @@ app.on('error', (err, ctx) => {
       ctx.status = 400;
       ctx.body = err.obj;
       break;
+    case 'JsonWebTokenError':
+      ctx.status = 401;
+      ctx.body = '';
+      break;
     default:
       ctx.status = ctx.status || 500;
-      ctx.body = err.obj || '';
+      ctx.body = err || '';
       break;
   }
 });

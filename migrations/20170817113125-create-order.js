@@ -1,29 +1,23 @@
 'use strict';
+
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface
-      .createTable('Users', {
+      .createTable('Orders', {
         id: {
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
           type: Sequelize.INTEGER
         },
-        email: {
+        total_price: {
+          type: Sequelize.DECIMAL(10, 2),
           allowNull: false,
-          type: Sequelize.STRING
+          defaultValue: 0.0
         },
-        password: {
-          allowNull: false,
-          type: Sequelize.STRING
-        },
-        first_name: {
-          allowNull: false,
-          type: Sequelize.STRING
-        },
-        last_name: {
-          allowNull: false,
-          type: Sequelize.STRING
+        user_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false
         },
         createdAt: {
           allowNull: false,
@@ -35,12 +29,19 @@ module.exports = {
         }
       })
       .then(() => {
-        return queryInterface.addIndex('Users', ['email'], {
-          indicesType: 'UNIQUE'
+        return queryInterface.addConstraint('Orders', ['user_id'], {
+          type: 'FOREIGN KEY',
+          references: {
+            table: 'Users',
+            field: 'id'
+          },
+          onDelete: 'cascade',
+          onUpdate: 'cascade'
         });
       });
   },
+
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Users');
+    return queryInterface.dropTable('Orders');
   }
 };

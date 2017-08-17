@@ -8,9 +8,8 @@ const { auth: auth_mw, validators: { user_create: user_create_validate_mw } } = 
 
 router.get('/', auth_mw, async (ctx, next) => {
   let { first_name, last_name } = ctx.request.query;
-  let users = null;
   try {
-    users = await models.User.findAll({
+    let users = await models.User.findAll({
       where: {
         first_name1: { $like: '%' + first_name + '%' },
         last_name1: { $like: '%' + last_name + '%' }
@@ -18,72 +17,72 @@ router.get('/', auth_mw, async (ctx, next) => {
       attributes: ['id', 'email', 'password', 'first_name', 'last_name']
     });
     ctx.body = users;
-  } catch (err) {
-    ctx.app.emit('error', err, ctx);
+  } catch (e) {
+    ctx.status = 500;
+    ctx.app.emit('error', e, ctx);
   }
 });
 
 router.get('/:id', async (ctx, next) => {
-  let user = null;
   try {
-    user = await models.User.findById(ctx.params.id);
+    let user = await models.User.findById(ctx.params.id);
     ctx.body = user;
-  } catch (err) {
+  } catch (e) {
     ctx.status = 500;
-    return (ctx.body = err);
+    ctx.app.emit('error', e, ctx);
   }
 });
 
 router.post('/', auth_mw, user_create_validate_mw, async (ctx, next) => {
   let { email, password, first_name, last_name } = ctx.request.body;
   try {
-    models.User.create({
+    await models.User.create({
       email: email,
       password: bcrypt.hashSync(password, salt),
       first_name: first_name,
       last_name: last_name
     });
+    ctx.status = 200;
   } catch (e) {
     ctx.status = 500;
-    return (ctx.body = e);
+    ctx.app.emit('error', e, ctx);
   }
-  ctx.status = 200;
 });
 
 router.put('/:id', auth_mw, user_create_validate_mw, async (ctx, next) => {
-  let user = null;
   try {
-    user = await models.User.update(ctx.request.body, {
+    let user = await models.User.update(ctx.request.body, {
       where: {
         id: ctx.params.id
       }
     });
-  } catch (err) {
+    if (user[0]) {
+      ctx.status = 200;
+    } else {
+      ctx.status = 404;
+    }
+  } catch (e) {
     ctx.status = 500;
-    return (ctx.body = err);
+    ctx.app.emit('error', e, ctx);
   }
-  if (user[0]) {
-    return (ctx.status = 200);
-  }
-  return (ctx.status = 404);
 });
 
 router.delete('/:id', auth_mw, async (ctx, next) => {
-  let user = null;
   try {
-    user = await models.User.destroy({
+    let user = await models.User.destroy({
       where: {
         id: ctx.params.id
       }
     });
-  } catch (err) {
+    if (user) {
+      ctx.status = 204;
+    } else {
+      ctx.status = 404;
+    }
+  } catch (e) {
     ctx.status = 500;
-    return (ctx.body = err);
+    ctx.app.emit('error', e, ctx);
   }
-  if (user) {
-    return (ctx.status = 204);
-  }
-  return (ctx.status = 404);
 });
 
 module.exports = router;

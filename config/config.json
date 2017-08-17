@@ -1,6 +1,5 @@
 {
   "secret": "qwe123",
-  "roles": "admin,member",
   "development": {
     "username": "postgres",
     "password": "1",

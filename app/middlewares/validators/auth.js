@@ -12,7 +12,6 @@ module.exports = async (ctx, next) => {
     await auth.validate();
     await next();
   } catch (e) {
-    ctx.status = 400;
     e.obj = validate_errors(e);
     ctx.app.emit('error', e, ctx);
   }

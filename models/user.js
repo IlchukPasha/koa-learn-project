@@ -45,7 +45,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     {
       classMethods: {
-        associate: function(models) {}
+        associate: function(models) {
+          User.hasMany(Order, { as: 'Orders' });
+
+          User.belongsToMany(Role, { as: 'Roles', through: 'UserRoles', foreignKey: 'user_id' });
+        }
       }
     }
   );
