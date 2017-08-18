@@ -19,7 +19,17 @@ module.exports = function(sequelize, DataTypes) {
       parent_id: {
         type: DataTypes.INTEGER(11),
         validate: {
-          // перевіряти чи є така батьківська категорія
+          isInt: { msg: 'Parent id must be integer' },
+          isCategoryExist: async value => {
+            let c = await Category.count({
+              where: {
+                id: value
+              }
+            });
+            if (c === 0) {
+              throw new Error('Parent category not exist');
+            }
+          }
         }
       }
     },

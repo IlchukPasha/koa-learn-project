@@ -10,7 +10,7 @@ const { validators: { user_create: user_create_validate_mw, auth: auth_validate_
 router.post('/signin', auth_validate_mw, async (ctx, next) => {
   let { email, password } = ctx.request.body;
   try {
-    let user = await models.User.find2({ where: { email: email } });
+    let user = await models.User.find({ where: { email: email } });
     if (user) {
       if (bcrypt.compareSync(password, user.password)) {
         let token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '120d' });

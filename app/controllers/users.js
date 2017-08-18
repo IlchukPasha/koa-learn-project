@@ -23,7 +23,7 @@ router.get('/', auth_mw, async (ctx, next) => {
   }
 });
 
-router.get('/:id', async (ctx, next) => {
+router.get('/:id', auth_mw, async (ctx, next) => {
   try {
     let user = await models.User.findById(ctx.params.id);
     ctx.body = user;
