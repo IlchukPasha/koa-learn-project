@@ -16,17 +16,24 @@ module.exports = function(sequelize, DataTypes) {
           notEmpty: { msg: 'total_price can`t be empty' }
           // чи є юзер
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          Order.hasMany(OrderItem, { as: 'OrderItems' });
-
-          Order.belongsTo(User, { as: 'User' });
-        }
-      }
+      underscored: true,
+      tableName: 'orders'
     }
   );
+
+  Order.associate = models => {
+    Order.belongsTo(models.User, { as: 'user', foreignKey: 'user_id' });
+    Order.hasMany(models.OrderItem);
+  };
+
   return Order;
 };

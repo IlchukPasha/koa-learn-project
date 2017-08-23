@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = function(sequelize, DataTypes) {
   let Product = sequelize.define(
     'Product',
@@ -14,27 +15,50 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.DECIMAL,
         validate: {
           notEmpty: { msg: 'price can`t be empty' },
-          isDecimal: true,
+          isDecimal: { msg: 'price must be decimal' },
           max: { args: 9999999999, msg: 'max length must be less then 1000000000' }
         }
       },
       category_id: {
         type: DataTypes.INTEGER,
         validate: {
-          notEmpty: { msg: 'category_id can`t be empty' }
-          // перевіряти чи єтака категорія
+          notEmpty: { msg: 'category_id can`t be empty' },
+          isCategoryExist: async (value, next) => {
+            if (value) {
+              let Category = sequelize.models.Category;
+              let c = await Category.count({
+                where: {
+                  id: value
+                }
+              });
+              if (c === 0) {
+                next('Category not exist');
+              } else {
+                next();
+              }
+            } else {
+              next('Category is empty');
+            }
+          }
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          Product.belongsTo(Category, { as: 'Category' });
-
-          Product.hasOne(ProductPacket, { as: 'ProductPacket' });
-        }
-      }
+      underscored: true,
+      tableName: 'products'
     }
   );
+
+  Product.associate = models => {
+    Product.belongsTo(models.Category, { as: 'category', foreignKey: 'category_id' });
+    Product.hasOne(models.ProductPacket);
+  };
+
   return Product;
 };

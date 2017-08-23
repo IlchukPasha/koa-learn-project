@@ -3,36 +3,42 @@
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface
-      .createTable('ProductPackets', {
-        id: {
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-          type: Sequelize.INTEGER
+      .createTable(
+        'product_packets',
+        {
+          id: {
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+            type: Sequelize.INTEGER
+          },
+          product_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+          },
+          quantity: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+          },
+          created_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          },
+          updated_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          }
         },
-        product_id: {
-          type: Sequelize.INTEGER,
-          allowNull: false
-        },
-        quantity: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          defaultValue: 0
-        },
-        createdAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        },
-        updatedAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        }
-      })
+        { charset: 'utf8', timestamps: true, underscored: true }
+      )
       .then(() => {
-        return queryInterface.addConstraint('ProductPackets', ['product_id'], {
+        return queryInterface.addConstraint('product_packets', ['product_id'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'Products',
+            table: 'products',
             field: 'id'
           },
           onDelete: 'cascade',
@@ -42,6 +48,6 @@ module.exports = {
   },
 
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('ProductPackets');
+    return queryInterface.dropTable('product_packets');
   }
 };

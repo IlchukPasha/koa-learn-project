@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 let env = require('./../../config/config.json');
-let models = require('./../../models');
+let models = require('../../models');
 
 module.exports = async (ctx, next) => {
   try {
@@ -11,7 +11,7 @@ module.exports = async (ctx, next) => {
         ctx.state._user = user;
         await next();
       } else {
-        ctx.status = 404;
+        ctx.status = 401;
       }
     } else {
       ctx.status = 401;

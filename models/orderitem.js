@@ -23,17 +23,24 @@ module.exports = function(sequelize, DataTypes) {
           notEmpty: { msg: 'product_packet_id can`t be empty' }
           // перевірить чи є
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          OrderItem.belongsTo(Order, { as: 'Order' });
-
-          OrderItem.belongsTo(ProductPacket, { as: 'ProductPacket' });
-        }
-      }
+      underscored: true,
+      tableName: 'order_items'
     }
   );
+
+  OrderItem.associate = models => {
+    OrderItem.belongsTo(models.ProductPacket, { as: 'product_packet', foreignKey: 'product_packet_id' });
+    OrderItem.belongsTo(models.Order, { as: 'order', foreignKey: 'order_id' });
+  };
+
   return OrderItem;
 };

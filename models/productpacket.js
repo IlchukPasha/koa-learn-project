@@ -15,17 +15,24 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           notEmpty: { msg: 'quantity can`t be empty' }
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          ProductPacket.hasOne(OrderItem, { as: 'OrderItem' });
-
-          ProductPacket.belongsTo(Product, { as: 'Product' });
-        }
-      }
+      underscored: true,
+      tableName: 'product_packets'
     }
   );
+
+  ProductPacket.associate = models => {
+    ProductPacket.hasOne(models.OrderItem);
+    ProductPacket.belongsTo(models.Product, { as: 'product', foreignKey: 'product_id' });
+  };
+
   return ProductPacket;
 };

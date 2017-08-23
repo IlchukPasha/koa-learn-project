@@ -3,40 +3,46 @@
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface
-      .createTable('Categories', {
-        id: {
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-          type: Sequelize.INTEGER
+      .createTable(
+        'categories',
+        {
+          id: {
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+            type: Sequelize.INTEGER
+          },
+          name: {
+            allowNull: false,
+            type: Sequelize.STRING
+          },
+          description: {
+            type: Sequelize.STRING
+          },
+          parent_id: {
+            type: Sequelize.INTEGER
+          },
+          created_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          },
+          updated_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          }
         },
-        name: {
-          allowNull: false,
-          type: Sequelize.STRING
-        },
-        description: {
-          type: Sequelize.STRING
-        },
-        parent_id: {
-          type: Sequelize.INTEGER
-        },
-        createdAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        },
-        updatedAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        }
+        { charset: 'utf8', timestamps: true, underscored: true }
+      )
+      .then(() => {
+        return queryInterface.addIndex('categories', ['parent_id']);
       })
       .then(() => {
-        return queryInterface.addIndex('Categories', ['parent_id']);
-      })
-      .then(() => {
-        return queryInterface.addConstraint('Categories', ['parent_id'], {
+        return queryInterface.addConstraint('categories', ['parent_id'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'Categories',
+            table: 'categories',
             field: 'id'
           },
           onDelete: 'cascade',
@@ -46,6 +52,6 @@ module.exports = {
   },
 
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Categories');
+    return queryInterface.dropTable('categories');
   }
 };

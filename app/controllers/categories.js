@@ -1,6 +1,6 @@
 const Router = require('koa-router');
-let router = new Router({ prefix: '/categories' });
-let models = require('./../../models');
+let router = new Router();
+let models = require('../../models');
 
 const { auth: auth_mw, validators: { category_create: category_create_validate_mw } } = require('./../middlewares');
 

@@ -1,6 +1,6 @@
 const Router = require('koa-router');
 let router = new Router();
-let models = require('./../../models');
+let models = require('../../models');
 let jwt = require('jsonwebtoken');
 let env = require('./../../config/config.json');
 let bcrypt = require('bcrypt-nodejs');

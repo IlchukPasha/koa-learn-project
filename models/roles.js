@@ -8,15 +8,23 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           notEmpty: { msg: 'name can`t be empty' }
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          Role.belongsToMany(User, { as: 'Users', through: 'UserRoles', foreignKey: 'role_id' });
-        }
-      }
+      underscored: true,
+      tableName: 'roles'
     }
   );
+
+  Role.associate = models => {
+    Role.belongsToMany(models.User, { as: 'users', through: 'UserRoles', foreignKey: 'role_id' });
+  };
+
   return Role;
 };

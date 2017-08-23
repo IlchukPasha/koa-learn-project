@@ -31,18 +31,25 @@ module.exports = function(sequelize, DataTypes) {
             }
           }
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          Category.hasMany(Product, { as: 'Products' });
-
-          Category.belongsTo(Category, { as: 'Category', foreignKey: 'parent_id', targetKey: 'id' });
-          Category.hasMany(Category, { as: 'Categories', foreignKey: 'parent_id', sourceKey: 'id' });
-        }
-      }
+      underscored: true,
+      tableName: 'categories'
     }
   );
+
+  Category.associate = models => {
+    Category.hasMany(models.Product);
+    Category.belongsTo(Category, { as: 'category', foreignKey: 'parent_id', targetKey: 'id' });
+    Category.hasMany(Category, { as: 'categories', foreignKey: 'parent_id', sourceKey: 'id' });
+  };
+
   return Category;
 };

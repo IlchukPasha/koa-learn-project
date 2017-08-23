@@ -1,6 +1,6 @@
 const Router = require('koa-router');
-let router = new Router({ prefix: '/users' });
-let models = require('./../../models');
+let router = new Router();
+let models = require('../../models');
 let bcrypt = require('bcrypt-nodejs');
 const salt = bcrypt.genSaltSync(10);
 
@@ -11,9 +11,19 @@ router.get('/', auth_mw, async (ctx, next) => {
   try {
     let users = await models.User.findAll({
       where: {
-        first_name1: { $like: '%' + first_name + '%' },
-        last_name1: { $like: '%' + last_name + '%' }
+        first_name: { $like: '%' + first_name + '%' },
+        last_name: { $like: '%' + last_name + '%' }
       },
+      include: [
+        {
+          model: models.Role,
+          as: 'roles',
+          attributes: ['id', 'name'],
+          through: {
+            attributes: []
+          }
+        }
+      ],
       attributes: ['id', 'email', 'password', 'first_name', 'last_name']
     });
     ctx.body = users;

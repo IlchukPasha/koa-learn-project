@@ -1,5 +1,4 @@
 const Koa = require('koa');
-
 let app = new Koa();
 
 app.use(require('koa-body')());
@@ -10,16 +9,16 @@ app.use(routes.routes()).use(routes.allowedMethods());
 app.on('error', (err, ctx) => {
   switch (err.name) {
     case 'SequelizeValidationError':
-      ctx.status = 400;
       ctx.body = err.obj;
+      ctx.status = 400;
       break;
     case 'JsonWebTokenError':
-      ctx.status = 401;
       ctx.body = '';
+      ctx.status = 401;
       break;
     default:
-      ctx.status = ctx.status || 500;
       ctx.body = err || '';
+      ctx.status = ctx.status || 500;
       break;
   }
 });

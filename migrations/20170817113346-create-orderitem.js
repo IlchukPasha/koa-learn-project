@@ -3,40 +3,46 @@
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface
-      .createTable('OrderItems', {
-        id: {
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-          type: Sequelize.INTEGER
+      .createTable(
+        'order_items',
+        {
+          id: {
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+            type: Sequelize.INTEGER
+          },
+          order_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+          },
+          product_packet_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+          },
+          packet_price: {
+            type: Sequelize.DECIMAL(10, 2),
+            allowNull: false,
+            defaultValue: 0.0
+          },
+          created_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          },
+          updated_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          }
         },
-        order_id: {
-          type: Sequelize.INTEGER,
-          allowNull: false
-        },
-        product_packet_id: {
-          type: Sequelize.INTEGER,
-          allowNull: false
-        },
-        packet_price: {
-          type: Sequelize.DECIMAL(10, 2),
-          allowNull: false,
-          defaultValue: 0.0
-        },
-        createdAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        },
-        updatedAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        }
-      })
+        { charset: 'utf8', timestamps: true, underscored: true }
+      )
       .then(() => {
-        return queryInterface.addConstraint('OrderItems', ['order_id'], {
+        return queryInterface.addConstraint('order_items', ['order_id'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'Orders',
+            table: 'orders',
             field: 'id'
           },
           onDelete: 'cascade',
@@ -44,10 +50,10 @@ module.exports = {
         });
       })
       .then(() => {
-        return queryInterface.addConstraint('OrderItems', ['product_packet_id'], {
+        return queryInterface.addConstraint('order_items', ['product_packet_id'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'ProductPackets',
+            table: 'product_packets',
             field: 'id'
           },
           onDelete: 'cascade',
@@ -57,6 +63,6 @@ module.exports = {
   },
 
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('OrderItems');
+    return queryInterface.dropTable('order_items');
   }
 };

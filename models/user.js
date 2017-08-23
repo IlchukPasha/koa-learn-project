@@ -41,17 +41,24 @@ module.exports = function(sequelize, DataTypes) {
           notEmpty: { msg: 'last_name can`t be empty' },
           len: { args: [4, 30], msg: 'last_name length must be in 4-30 symbols' }
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {
-          User.hasMany(Order, { as: 'Orders' });
-
-          User.belongsToMany(Role, { as: 'Roles', through: 'UserRoles', foreignKey: 'user_id' });
-        }
-      }
+      underscored: true,
+      tableName: 'users'
     }
   );
+
+  User.associate = models => {
+    User.hasMany(models.Order);
+    User.belongsToMany(models.Role, { as: 'roles', through: 'UserRoles', foreignKey: 'user_id' });
+  };
+
   return User;
 };

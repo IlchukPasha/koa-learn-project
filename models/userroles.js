@@ -16,12 +16,17 @@ module.exports = function(sequelize, DataTypes) {
           notEmpty: { msg: 'role_id can`t be empty' }
           // чи є роль
         }
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     },
     {
-      classMethods: {
-        associate: function(models) {}
-      }
+      underscored: true,
+      tableName: 'user_roles'
     }
   );
   return UserRoles;

@@ -3,36 +3,42 @@
 module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface
-      .createTable('Orders', {
-        id: {
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-          type: Sequelize.INTEGER
+      .createTable(
+        'orders',
+        {
+          id: {
+            allowNull: false,
+            autoIncrement: true,
+            primaryKey: true,
+            type: Sequelize.INTEGER
+          },
+          total_price: {
+            type: Sequelize.DECIMAL(10, 2),
+            allowNull: false,
+            defaultValue: 0.0
+          },
+          user_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+          },
+          created_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          },
+          updated_at: {
+            allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
+          }
         },
-        total_price: {
-          type: Sequelize.DECIMAL(10, 2),
-          allowNull: false,
-          defaultValue: 0.0
-        },
-        user_id: {
-          type: Sequelize.INTEGER,
-          allowNull: false
-        },
-        createdAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        },
-        updatedAt: {
-          allowNull: false,
-          type: Sequelize.DATE
-        }
-      })
+        { charset: 'utf8', timestamps: true, underscored: true }
+      )
       .then(() => {
-        return queryInterface.addConstraint('Orders', ['user_id'], {
+        return queryInterface.addConstraint('orders', ['user_id'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'Users',
+            table: 'users',
             field: 'id'
           },
           onDelete: 'cascade',
@@ -42,6 +48,6 @@ module.exports = {
   },
 
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Orders');
+    return queryInterface.dropTable('orders');
   }
 };
