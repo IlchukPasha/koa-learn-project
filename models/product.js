@@ -56,8 +56,8 @@ module.exports = function(sequelize, DataTypes) {
   );
 
   Product.associate = models => {
-    Product.belongsTo(models.Category, { as: 'category', foreignKey: 'category_id' });
-    Product.hasOne(models.ProductPacket);
+    Product.Category = Product.belongsTo(models.Category, { as: 'category', foreignKey: 'category_id' });
+    Product.ProductPacket = Product.hasOne(models.ProductPacket, { as: 'product_packet' });
   };
 
   return Product;

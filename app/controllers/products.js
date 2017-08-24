@@ -20,6 +20,7 @@ router.get('/', auth_mw, async (ctx, next) => {
       attributes: ['id', 'name', 'price', 'category_id']
     });
     ctx.body = products;
+    ctx.type = 'application/json';
   } catch (e) {
     ctx.status = 500;
     ctx.app.emit('error', e, ctx);
@@ -35,8 +36,8 @@ router.get('/:id', auth_mw, async (ctx, next) => {
     if (product) {
       ctx.body = product;
     } else {
-      // return text/plain why ???
       ctx.body = '';
+      ctx.type = 'application/json';
       ctx.status = 404;
     }
   } catch (e) {
@@ -46,15 +47,22 @@ router.get('/:id', auth_mw, async (ctx, next) => {
 });
 
 router.post('/', auth_mw, async (ctx, next) => {
-  let { name, price, category_id } = ctx.request.body;
+  let { name, price } = ctx.request.body;
   try {
-    await models.Product.create({
-      name: name,
-      price: price,
-      category_id: category_id
-    });
-    ctx.status = 201;
+    await models.Product.create(
+      {
+        name: name,
+        price: price,
+        category: {
+          name: 'some cat',
+          description: 'desc'
+        }
+      },
+      { include: [models.Product.Category] }
+    );
     ctx.body = '';
+    ctx.type = 'application/json';
+    ctx.status = 201;
   } catch (e) {
     if (e.name === 'SequelizeValidationError') {
       e.obj = validate_errors(e);
@@ -80,8 +88,9 @@ router.put('/:id', auth_mw, async (ctx, next) => {
         }
       }
     );
-    ctx.status = 200;
     ctx.body = '';
+    ctx.type = 'application/json';
+    ctx.status = 200;
   } catch (e) {
     if (e.name === 'SequelizeValidationError') {
       e.obj = validate_errors(e);
@@ -100,10 +109,12 @@ router.delete('/:id', auth_mw, async (ctx, next) => {
       }
     });
     if (product) {
+      ctx.type = 'application/json';
       ctx.status = 204;
     } else {
-      ctx.status = 404;
       ctx.body = '';
+      ctx.type = 'application/json';
+      ctx.status = 404;
     }
   } catch (e) {
     if (e.name === 'SequelizeValidationError') {

@@ -7,8 +7,26 @@ const { auth: auth_mw, validators: { category_create: category_create_validate_m
 router.get('/', auth_mw, async (ctx, next) => {
   try {
     let categories = await models.Category.findAll({
-      attributes: ['id', 'name', 'description', 'parent_id']
+      attributes: ['id', 'name', 'description', 'parent_id'],
+      include: [
+        {
+          model: models.Product,
+          as: 'products',
+          attributes: ['id', 'name', 'price', 'category_id']
+        },
+        {
+          model: models.Category,
+          as: 'category',
+          attributes: ['id', 'name', 'description', 'parent_id']
+        },
+        {
+          model: models.Category,
+          as: 'categories',
+          attributes: ['id', 'name', 'description', 'parent_id']
+        }
+      ]
     });
+    ctx.type = 'application/json';
     ctx.body = categories;
   } catch (e) {
     ctx.status = 500;
@@ -22,10 +40,11 @@ router.get('/:id', auth_mw, async (ctx, next) => {
       attributes: ['id', 'name', 'description', 'parent_id']
     });
     if (category) {
+      ctx.type = 'application/json';
       ctx.body = category;
     } else {
-      // return text/plain why ???
       ctx.body = '';
+      ctx.type = 'application/json';
       ctx.status = 404;
     }
   } catch (e) {
@@ -37,8 +56,9 @@ router.get('/:id', auth_mw, async (ctx, next) => {
 router.post('/', auth_mw, category_create_validate_mw, async (ctx, next) => {
   try {
     await models.Category.create(ctx.request.body);
-    ctx.status = 201;
     ctx.body = '';
+    ctx.type = 'application/json';
+    ctx.status = 201;
   } catch (e) {
     ctx.status = 500;
     ctx.app.emit('error', e, ctx);
@@ -52,8 +72,9 @@ router.put('/:id', auth_mw, category_create_validate_mw, async (ctx, next) => {
         id: ctx.params.id
       }
     });
-    ctx.status = 200;
     ctx.body = '';
+    ctx.type = 'application/json';
+    ctx.status = 200;
   } catch (e) {
     ctx.status = 500;
     ctx.app.emit('error', e, ctx);
@@ -68,10 +89,12 @@ router.delete('/:id', auth_mw, async (ctx, next) => {
       }
     });
     if (category) {
+      ctx.type = 'application/json';
       ctx.status = 204;
     } else {
-      ctx.status = 404;
       ctx.body = '';
+      ctx.type = 'application/json';
+      ctx.status = 404;
     }
   } catch (e) {
     ctx.status = 500;

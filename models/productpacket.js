@@ -6,8 +6,18 @@ module.exports = function(sequelize, DataTypes) {
       product_id: {
         type: DataTypes.INTEGER,
         validate: {
-          notEmpty: { msg: 'product_id can`t be empty' }
-          // перевіряти чи є такий продукт
+          notEmpty: { msg: 'product_id can`t be empty' },
+          isProductExist: async value => {
+            let Product = sequelize.models.Product;
+            let c = await Product.count({
+              where: {
+                id: value
+              }
+            });
+            if (c === 0) {
+              throw new Error('Product not exist');
+            }
+          }
         }
       },
       quantity: {
@@ -30,8 +40,8 @@ module.exports = function(sequelize, DataTypes) {
   );
 
   ProductPacket.associate = models => {
-    ProductPacket.hasOne(models.OrderItem);
-    ProductPacket.belongsTo(models.Product, { as: 'product', foreignKey: 'product_id' });
+    ProductPacket.hasOne(models.OrderItem, { as: 'order_item' });
+    ProductPacket.OwnProduct = ProductPacket.belongsTo(models.Product, { as: 'product', foreignKey: 'product_id' });
   };
 
   return ProductPacket;

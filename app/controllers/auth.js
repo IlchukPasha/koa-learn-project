@@ -15,11 +15,14 @@ router.post('/signin', auth_validate_mw, async (ctx, next) => {
       if (bcrypt.compareSync(password, user.password)) {
         let token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '120d' });
         ctx.status = 200;
+        ctx.type = 'application/json';
         ctx.body = { token: token };
       } else {
+        ctx.type = 'application/json';
         ctx.status = 401;
       }
     } else {
+      ctx.type = 'application/json';
       ctx.status = 401;
     }
   } catch (e) {
@@ -39,6 +42,7 @@ router.post('/signup', user_create_validate_mw, async (ctx, next) => {
     });
     let token = jwt.sign({ id: user.id }, env.secret, { expiresIn: '120d' });
     ctx.status = 200;
+    ctx.type = 'application/json';
     ctx.body = { token: token };
   } catch (e) {
     ctx.status = 500;

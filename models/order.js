@@ -13,8 +13,18 @@ module.exports = function(sequelize, DataTypes) {
       user_id: {
         type: DataTypes.INTEGER,
         validate: {
-          notEmpty: { msg: 'total_price can`t be empty' }
-          // чи є юзер
+          notEmpty: { msg: 'total_price can`t be empty' },
+          isUserExist: async value => {
+            let User = sequelize.models.User;
+            let c = await User.count({
+              where: {
+                id: value
+              }
+            });
+            if (c === 0) {
+              throw new Error('User not exist');
+            }
+          }
         }
       },
       created_at: {
@@ -32,7 +42,7 @@ module.exports = function(sequelize, DataTypes) {
 
   Order.associate = models => {
     Order.belongsTo(models.User, { as: 'user', foreignKey: 'user_id' });
-    Order.hasMany(models.OrderItem);
+    Order.hasMany(models.OrderItem, { as: 'order_items' });
   };
 
   return Order;

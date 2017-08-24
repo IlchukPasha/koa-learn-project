@@ -6,15 +6,35 @@ module.exports = function(sequelize, DataTypes) {
       user_id: {
         type: DataTypes.INTEGER,
         validate: {
-          notEmpty: { msg: 'user_id can`t be empty' }
-          // чи є юзер
+          notEmpty: { msg: 'user_id can`t be empty' },
+          isUserExist: async value => {
+            let User = sequelize.models.User;
+            let c = await User.count({
+              where: {
+                id: value
+              }
+            });
+            if (c === 0) {
+              throw new Error('User not exist');
+            }
+          }
         }
       },
       role_id: {
         type: DataTypes.INTEGER,
         validate: {
-          notEmpty: { msg: 'role_id can`t be empty' }
-          // чи є роль
+          notEmpty: { msg: 'role_id can`t be empty' },
+          isRoleExist: async value => {
+            let Role = sequelize.models.Role;
+            let c = await Role.count({
+              where: {
+                id: value
+              }
+            });
+            if (c === 0) {
+              throw new Error('Role not exist');
+            }
+          }
         }
       },
       created_at: {
