@@ -26,6 +26,6 @@ app.on('error', (err, ctx) => {
   }
 });
 
-app.listen(1337);
+let server = app.listen(1337);
 
-module.exports = app;
+module.exports = server;

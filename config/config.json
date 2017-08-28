@@ -7,6 +7,12 @@
     "host": "localhost",
     "dialect": "postgres"
   },
-  "test": {},
+  "testing": {
+    "username": "postgres",
+    "password": "1",
+    "database": "koa_learn_db_test",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
   "production": {}
 }
